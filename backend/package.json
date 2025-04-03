@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "daystar-daycare-backend",
   "version": "1.0.0",
@@ -24,3 +25,6 @@
     "nodemon": "^2.0.22"
   }
 } 
+=======
+ 
+>>>>>>> 5178bdc1c18d5bb4790ae132cb92fbd4b07a9176

@@ -1,5 +1,5 @@
-CREATE DATABASE DaystarDaycareDB;
-USE DaystarDaycareDB;
+CREATE DATABASE IF NOT EXISTS daystar_daycare;
+USE daystar_daycare;
 
 -- Table for storing babysitter details
 CREATE TABLE Babysitters (
@@ -92,3 +92,7 @@ CREATE TABLE Users (
     PasswordHash VARCHAR(255) NOT NULL,
     Role ENUM('Manager', 'Babysitter') NOT NULL
 );
+
+CREATE USER 'daycare_user'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON daystar_daycare.* TO 'daycare_user'@'localhost';
+FLUSH PRIVILEGES;

@@ -2,10 +2,10 @@
   "name": "daystar-daycare-backend",
   "version": "1.0.0",
   "description": "Backend for Daystar Daycare Management System",
-  "main": "app.js",
+  "main": "backend/app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "node backend/app.js",
+    "dev": "nodemon backend/app.js",
     "test": "jest",
     "lint": "eslint .",
     "format": "prettier --write ."

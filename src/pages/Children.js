@@ -74,7 +74,7 @@ function Children() {
   const handleOpenDialog = (child = null) => {
     if (child) {
       setCurrentChild(child);
-      // Format dates for the form
+      // Formatting dates for the form
       const formattedChild = {
         ...child,
         dateOfBirth: child.dateOfBirth ? new Date(child.dateOfBirth).toISOString().split('T')[0] : '',
@@ -421,4 +421,4 @@ function Children() {
   );
 }
 
-export default Children; 
+export default Children;

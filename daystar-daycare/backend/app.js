@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const helmet = require('helmet');
-const compression = require('compression');
+const path = require('path');
+const { errorHandler, notFound } = require('./middleware/error');
 const { sequelize } = require('./models');
 const authRoutes = require('./routes/auth.routes');
 const babysitterRoutes = require('./routes/babysitter.routes');
@@ -10,15 +10,23 @@ const childRoutes = require('./routes/child.routes');
 const financeRoutes = require('./routes/finance.routes');
 const notificationRoutes = require('./routes/notification.routes');
 
+// Import routes
+const userRoutes = require('./routes/users');
+const eventRoutes = require('./routes/events');
+const paymentRoutes = require('./routes/payments');
+const analyticsRoutes = require('./routes/analytics');
+const backupRoutes = require('./routes/backup');
+
 const app = express();
 
 // Middleware
-app.use(helmet()); // Security headers
-app.use(compression()); // Compress responses
-app.use(cors()); // Enable CORS
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-app.use(morgan('dev')); // Logging
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+
+// Serve static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -26,6 +34,11 @@ app.use('/api/babysitters', babysitterRoutes);
 app.use('/api/children', childRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/backup', backupRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -35,24 +48,9 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-
-  res.status(err.status || 500).json({
-    status: 'error',
-    message: err.message || 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err : undefined
-  });
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    status: 'error',
-    message: 'Route not found'
-  });
-});
+// Error handling
+app.use(notFound);
+app.use(errorHandler);
 
 // Database connection and server start
 const PORT = process.env.PORT || 5000;

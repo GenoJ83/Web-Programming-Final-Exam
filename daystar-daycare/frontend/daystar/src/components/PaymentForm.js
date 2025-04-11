@@ -19,15 +19,18 @@ import {
 } from '@stripe/react-stripe-js';
 import axios from 'axios';
 
-// Load Stripe
+// Initialize Stripe with public key from environment variables
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
+// Main payment form content component
 const PaymentFormContent = ({ amount, onSuccess, onError }) => {
+  // Initialize Stripe hooks and state
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Handle form submission and payment processing
   const handleSubmit = async (event) => {
     event.preventDefault();
     
@@ -39,12 +42,12 @@ const PaymentFormContent = ({ amount, onSuccess, onError }) => {
     setError(null);
 
     try {
-      // Create payment intent
+      // Create payment intent on backend
       const { data: clientSecret } = await axios.post('/api/payments/create-intent', {
         amount
       });
 
-      // Confirm payment
+      // Confirm payment with Stripe
       const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
         clientSecret,
         {
@@ -80,6 +83,7 @@ const PaymentFormContent = ({ amount, onSuccess, onError }) => {
         </Typography>
         <Card variant="outlined" sx={{ mt: 2 }}>
           <CardContent>
+            {/* Stripe CardElement for collecting card details */}
             <CardElement
               options={{
                 style: {
@@ -100,12 +104,14 @@ const PaymentFormContent = ({ amount, onSuccess, onError }) => {
         </Card>
       </Box>
 
+      {/* Display error message if payment fails */}
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
 
+      {/* Submit button with loading state */}
       <Button
         type="submit"
         variant="contained"
@@ -119,6 +125,7 @@ const PaymentFormContent = ({ amount, onSuccess, onError }) => {
   );
 };
 
+// Wrapper component that provides Stripe Elements context
 const PaymentForm = (props) => {
   return (
     <Elements stripe={stripePromise}>

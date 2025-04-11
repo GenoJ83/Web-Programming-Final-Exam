@@ -23,7 +23,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Enrollment from './pages/Enrollment';
 import Profile from './pages/Profile';
 
-// Protected Route Component
+// Protected route wrapper - redirects to login if not authenticated
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
@@ -38,7 +38,7 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Public Route Component (redirects to dashboard if already logged in)
+// Public route wrapper - redirects to dashboard if already authenticated
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
@@ -61,6 +61,7 @@ const DashboardContent = () => {
     return <Navigate to="/login" />;
   }
 
+  // Switch between different dashboard views based on user role
   switch (user.role) {
     case 'parent':
       return <ParentDashboard />;
@@ -75,6 +76,7 @@ const DashboardContent = () => {
   }
 };
 
+// Main App component with routing and authentication setup
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -82,7 +84,7 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            {/* Public Routes */}
+            {/* Public Routes - Accessible without authentication */}
             <Route path="/" element={<Landing />} />
             <Route 
               path="/login" 
@@ -101,7 +103,7 @@ function App() {
               } 
             />
 
-            {/* Protected Routes */}
+            {/* Protected Routes - Require authentication */}
             <Route
               path="/dashboard"
               element={

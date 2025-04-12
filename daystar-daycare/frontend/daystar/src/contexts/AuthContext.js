@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { authAPI } from '../utils/api';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
       } else {
         // Fetch user data from API
-        const response = await authAPI.getCurrentUser();
+        const response = await authAPI.getProfile();
         setUser(response.data);
       }
     } catch (error) {
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setLoading(true);
-      const response = await authAPI.login(email, password);
+      const response = await authAPI.login({ email, password });
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -123,4 +123,11 @@ export const AuthProvider = ({ children }) => {
     updateProfile
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>; 
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthContext; 
